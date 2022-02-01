@@ -22,6 +22,16 @@ namespace DotnetIdentity.Controllers
         {
             return View();
         }
+        
+        public IActionResult Member()
+        {
+            return View();
+        }
+
+        public IActionResult Admin()
+        {
+            return View();
+        }
 
         public IActionResult Privacy()
         {

@@ -1,13 +1,15 @@
+using System;
+using DotnetIdentity.Data;
+using DotnetIdentity.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+
 
 namespace DotnetIdentity
 {
@@ -24,6 +26,32 @@ namespace DotnetIdentity
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            var conn = Configuration["ConnectionStrings:Default"];
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(conn));
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<AppDbContext>();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireDigit = true;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Lockout.MaxFailedAccessAttempts = 3;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+                options.SignIn.RequireConfirmedEmail = true;
+            });
+
+            services.ConfigureApplicationCookie(options => 
+            {
+                options.LoginPath = "/Identity/Signin";
+                options.AccessDeniedPath = "/Identity/AccessDenied";
+            });
+
+            services.Configure<SmtpOptions>(Configuration.GetSection("Smtp"));
+
+            services.AddSingleton<IEmailSender, SmtpEmailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -43,6 +71,8 @@ namespace DotnetIdentity
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
