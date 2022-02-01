@@ -41,6 +41,12 @@ namespace DotnetIdentity
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
             });
 
+            services.ConfigureApplicationCookie(options => 
+            {
+                options.LoginPath = "/Identity/Signin";
+                options.AccessDeniedPath = "/Identity/AccessDenied";
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
