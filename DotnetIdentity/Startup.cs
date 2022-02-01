@@ -1,5 +1,6 @@
 using System;
 using DotnetIdentity.Data;
+using DotnetIdentity.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -39,6 +40,7 @@ namespace DotnetIdentity
                 options.Password.RequireNonAlphanumeric = false;
                 options.Lockout.MaxFailedAccessAttempts = 3;
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+                options.SignIn.RequireConfirmedEmail = true;
             });
 
             services.ConfigureApplicationCookie(options => 
@@ -47,6 +49,9 @@ namespace DotnetIdentity
                 options.AccessDeniedPath = "/Identity/AccessDenied";
             });
 
+            services.Configure<SmtpOptions>(Configuration.GetSection("Smtp"));
+
+            services.AddSingleton<IEmailSender, SmtpEmailSender>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
