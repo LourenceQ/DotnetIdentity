@@ -1,0 +1,26 @@
+﻿@model SignupViewModel
+@{
+    ViewData["Title"] = "Signup";
+}
+
+<h1>Registrar</h1>
+
+<form asp-controller="Identity" asp-action="Signup" method="post">
+    @Html.ValidationSummary()
+    <div class="form-group col-4">
+        <label asp-for="Email">Email:</label>
+        <input type="text" asp-for="Email" class="form-control" />
+    </div>
+
+    <div class="form-group col-4">
+        <label asp-for="Password">Senha:</label>
+        <input type="text" asp-for="Password" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary" >Cadastrar</button>
+</form>
+
+<div class="alert alert-info">
+    Se já possui uma conta, por favor vá para <a asp-action="Signin">Login</a>
+</div>
+
