@@ -12,19 +12,22 @@ namespace DotnetIdentity.Controllers
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailSender _emailSender;
         private readonly SignInManager<IdentityUser> _signinManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public IdentityController(UserManager<IdentityUser> userManager, 
                 IEmailSender emailSender,
-                SignInManager<IdentityUser> signinManager)
+                SignInManager<IdentityUser> signinManager,
+                RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _emailSender = emailSender;
             _signinManager = signinManager;
+            _roleManager = roleManager;
         }
 
         public async Task<IActionResult> Signup()
         {
-            var model =  new SignupViewModel();
+            var model =  new SignupViewModel() { Role = "Member"};
             return View(model);
         }
 
@@ -47,8 +50,8 @@ namespace DotnetIdentity.Controllers
 
                     if (result.Succeeded)
                     {
-                        var confirmationLink = Url.ActionLink("ConfirmEmail", "Identity", new { userId = user.Id, @token = token });
-                        await _emailSender.SendEmailAsync("lawrenceqf@gmail.com", user.Email, "Confirme seu endereço de email", confirmationLink);
+                        /*var confirmationLink = Url.ActionLink("ConfirmEmail", "Identity", new { userId = user.Id, @token = token });
+                        await _emailSender.SendEmailAsync("lawrenceqf@gmail.com", user.Email, "Confirme seu endereço de email", confirmationLink);*/
 
                         return RedirectToAction("Signin");
                     }
