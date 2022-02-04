@@ -36,6 +36,18 @@ namespace DotnetIdentity.Controllers
         {            
             if (ModelState.IsValid)
             {
+                if(!await _roleManager.RoleExistsAsync(model.Role))
+                {
+                    var role = new IdentityRole { Name = model.Role };
+                    var roleResult = await _roleManager.CreateAsync(role);
+                    if(!roleResult.Succeeded)
+                    {
+                        var errors = roleResult.Errors.Select(s => s.Description);
+                        ModelState.AddModelError("Role", string.Join(",", errors));
+                        return View(model);
+                    }
+                }
+
                 if((await _userManager.FindByEmailAsync(model.Email)) == null)
                 {
                     var user = new IdentityUser
@@ -50,6 +62,7 @@ namespace DotnetIdentity.Controllers
 
                     if (result.Succeeded)
                     {
+                        await _userManager.AddToRoleAsync(user, model.Role);
                         /*var confirmationLink = Url.ActionLink("ConfirmEmail", "Identity", new { userId = user.Id, @token = token });
                         await _emailSender.SendEmailAsync("lawrenceqf@gmail.com", user.Email, "Confirme seu endereço de email", confirmationLink);*/
 
