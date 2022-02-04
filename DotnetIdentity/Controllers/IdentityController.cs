@@ -11,11 +11,15 @@ namespace DotnetIdentity.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly SignInManager<IdentityUser> _signinManager;
 
-        public IdentityController(UserManager<IdentityUser> userManager, IEmailSender emailSender)
+        public IdentityController(UserManager<IdentityUser> userManager, 
+                IEmailSender emailSender,
+                SignInManager<IdentityUser> signinManager)
         {
             _userManager = userManager;
             _emailSender = emailSender;
+            _signinManager = signinManager;
         }
 
         public async Task<IActionResult> Signup()
@@ -44,7 +48,7 @@ namespace DotnetIdentity.Controllers
                     if (result.Succeeded)
                     {
                         var confirmationLink = Url.ActionLink("ConfirmEmail", "Identity", new { userId = user.Id, @token = token });
-                        await _emailSender.SendEmailAsync("lawenceqf@gmail.com", user.Email, "Confirme seu endereço de email", confirmationLink);
+                        await _emailSender.SendEmailAsync("lawrenceqf@gmail.com", user.Email, "Confirme seu endereço de email", confirmationLink);
 
                         return RedirectToAction("Signin");
                     }
@@ -58,12 +62,60 @@ namespace DotnetIdentity.Controllers
 
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
-            return new OkResult();
+            var user = await _userManager.FindByIdAsync(userId);
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if(result.Succeeded)
+            {
+                return RedirectToAction("Signin");                
+            }
+
+            return new NotFoundResult();
         }
 
         public async Task<IActionResult> Signin()
         {
-            return View();
+            return View(new SigninViewModel());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Signin(SigninViewModel model)
+        {
+            if(ModelState.IsValid)
+            {
+                var result = await _signinManager.PasswordSignInAsync(
+                    model.Username,
+                    model.Password,
+                    model.RememberMe, false);
+                
+                if (result.Succeeded)
+                {
+                    /*var user = await _userManager.FindByEmailAsync(model.Username);
+
+                    var userClaims = await _userManager.GetClaimsAsync(user);
+
+                    if(await _userManager.IsInRoleAsync(user, "Member"))
+                    {
+                        return RedirectToAction("Member", "Home");
+                    }
+                    else if(await _userManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        return RedirectToAction("Admin", "Home");
+                    }*/
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    ModelState.AddModelError("Login", "Cannot login.");
+                    
+                }
+            }
+            return View(model);
+
+            /*else
+            {
+                return View(model);
+            }*/
         }
 
         public async Task<IActionResult> AccessDenied()
