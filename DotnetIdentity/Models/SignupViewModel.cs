@@ -11,5 +11,7 @@ namespace DotnetIdentity.Models
         [Required]
         [DataType(DataType.Password, ErrorMessage = "Senha incorreta.")]
         public string Password { get; set; }
+        [Required]
+        public string Role { get; set; }
     }
 }

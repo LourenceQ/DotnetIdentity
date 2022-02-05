@@ -31,7 +31,7 @@ namespace DotnetIdentity
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(conn));
 
             services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>();
+                .AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
             services.Configure<IdentityOptions>(options =>
             {
