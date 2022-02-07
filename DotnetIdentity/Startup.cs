@@ -52,6 +52,19 @@ namespace DotnetIdentity
             services.Configure<SmtpOptions>(Configuration.GetSection("Smtp"));
 
             services.AddSingleton<IEmailSender, SmtpEmailSender>();
+
+            services.AddAuthorization(options => 
+            {
+                options.AddPolicy("MemberDep", p => 
+                {
+                    p.RequireClaim("Department", "Tech", "Financial").RequireRole("Member");
+                });
+
+                options.AddPolicy("AdminDep", p => 
+                {
+                    p.RequireClaim("Department", "Tech", "Financial").RequireRole("Admin");
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
