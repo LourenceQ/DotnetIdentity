@@ -113,12 +113,12 @@ namespace DotnetIdentity.Controllers
 
                     var userClaims = await _userManager.GetClaimsAsync(user);
 
-                    var userClaimsList = await _userManager.GetClaimsAsync(user);
-                    if(!userClaims.Any(c => c.Type == "Department"))
-                    {
-                        ModelState.AddModelError("Claim", "User not in tech department");
-                        return View(model);
-                    }
+                    // var userClaimsList = await _userManager.GetClaimsAsync(user);
+                    // if(!userClaims.Any(c => c.Type == "Department"))
+                    // {
+                    //     ModelState.AddModelError("Claim", $"User not in {"Department"}");
+                    //     return View(model);
+                    // }
 
                     if (await _userManager.IsInRoleAsync(user, "Member"))
                     {

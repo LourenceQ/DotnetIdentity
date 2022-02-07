@@ -1,4 +1,5 @@
 ﻿using DotnetIdentity.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -21,13 +22,15 @@ namespace DotnetIdentity.Controllers
         public IActionResult Index()
         {
             return View();
-        }
+        }        
         
+        [Authorize(Policy = "MemberDep")]
         public IActionResult Member()
         {
             return View();
         }
 
+        [Authorize(Policy = "AdminDep")]
         public IActionResult Admin()
         {
             return View();
