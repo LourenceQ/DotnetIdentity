@@ -1,6 +1,6 @@
 # DotnetIdentity
 
-## Implementação de ASP.NET Core Identity e gerenciamento de segurança 
+## ASP.NET Core Identity Implementation and Security Management
 
 ### Descrição
 
